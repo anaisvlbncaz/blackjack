@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-
-    ### Permet au site de s'adapter au téléphone ###
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Blackjack Royale</title>
@@ -14,93 +11,72 @@
 
 <body>
 
-    ### En-tête ###
     <header>
         <div class="logo">
-            ♠ BLACKJACK <span>ROYALE</span> ♠
+            ♠ BLACKJACK ROYALE ♠
         </div>
 
-        <div class="balance-box">
-            <span>JETONS</span>
-            <strong id="balance">1000</strong>
-            🪙
+        <div class="balance">
+            🪙 <span id="balance">1000</span>
         </div>
     </header>
 
-    ### Contenu principal ###
     <main>
 
-        ### Titre ###
-        <section class="hero">
-            <p class="eyebrow">TABLE PRIVÉE</p>
-            <h1>BLACKJACK</h1>
-            <p>Le but est simple : approcher 21 sans le dépasser.</p>
-        </section>
+        <h1>BLACKJACK</h1>
+        <p class="subtitle">La table est ouverte</p>
 
-        ### Table ###
         <section class="table">
 
-            ### Croupier ###
-            <div class="player-area">
+            <div class="zone">
+                <h2>CROUPIER</h2>
 
-                <div class="player-title">
-                    <h2>CROUPIER</h2>
-                    <span id="dealer-score">?</span>
+                <div id="dealer-cards" class="cards"></div>
+
+                <div class="score">
+                    Score : <span id="dealer-score">?</span>
                 </div>
-
-                <div class="cards" id="dealer-cards"></div>
-
             </div>
 
-            ### Message central ###
-            <div class="game-message" id="game-message">
-                Placez votre mise pour commencer
+            <div id="message" class="message">
+                Cliquez sur « Nouvelle partie »
             </div>
 
-            ### Joueur ###
-            <div class="player-area">
+            <div class="zone">
+                <h2>VOUS</h2>
 
-                <div class="player-title">
-                    <h2>VOUS</h2>
-                    <span id="player-score">0</span>
+                <div id="player-cards" class="cards"></div>
+
+                <div class="score">
+                    Score : <span id="player-score">0</span>
                 </div>
-
-                <div class="cards" id="player-cards"></div>
-
             </div>
 
         </section>
 
-        ### Contrôles ###
         <section class="controls">
 
-            <div class="bet-area">
+            <div class="bet">
+                <span>Mise</span>
 
-                <label for="bet">MISE</label>
+                <button id="minus">−</button>
 
-                <div class="bet-controls">
-                    <button id="minus-bet">−</button>
+                <strong id="bet">50</strong>
 
-                    <div class="bet-value">
-                        <span id="bet">50</span> 🪙
-                    </div>
-
-                    <button id="plus-bet">+</button>
-                </div>
-
+                <button id="plus">+</button>
             </div>
 
             <div class="buttons">
 
-                <button class="btn primary" id="start-button">
+                <button id="new-game" class="gold">
                     NOUVELLE PARTIE
                 </button>
 
-                <button class="btn" id="hit-button" disabled>
+                <button id="hit" disabled>
                     TIRER
                 </button>
 
-                <button class="btn" id="stand-button" disabled>
+                <button id="stand" disabled>
                     RESTER
                 </button>
 
@@ -108,22 +84,20 @@
 
         </section>
 
-        ### Historique ###
         <section class="history">
 
-            <h3>DERNIÈRES PARTIES</h3>
+            <h3>HISTORIQUE</h3>
 
-            <div id="history-list">
-                <p>Aucune partie jouée</p>
+            <div id="history">
+                Aucune partie pour le moment.
             </div>
 
         </section>
 
     </main>
 
-    ### Pied de page ###
     <footer>
-        BLACKJACK ROYALE · JEU DE DIVERTISSEMENT · JETONS VIRTUELS
+        BLACKJACK ROYALE · JETONS VIRTUELS
     </footer>
 
     <script src="script.js"></script>
