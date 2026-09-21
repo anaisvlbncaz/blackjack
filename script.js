@@ -1,6 +1,10 @@
-### Variables ###
+// Variables
 
-let balance = Number(localStorage.getItem("blackjackBalance")) || 1000;
+let balance = Number(localStorage.getItem("blackjackBalance"));
+
+if (!balance) {
+    balance = 1000;
+}
 
 let bet = 50;
 
@@ -9,113 +13,77 @@ let deck = [];
 let playerCards = [];
 let dealerCards = [];
 
-let gameStarted = false;
-let gameOver = false;
+let playing = false;
+let finished = false;
 
-### Éléments HTML ###
+
+// Éléments HTML
 
 const balanceElement = document.getElementById("balance");
 
 const betElement = document.getElementById("bet");
 
-const playerCardsElement = document.getElementById("player-cards");
-const dealerCardsElement = document.getElementById("dealer-cards");
+const playerCardsElement =
+    document.getElementById("player-cards");
 
-const playerScoreElement = document.getElementById("player-score");
-const dealerScoreElement = document.getElementById("dealer-score");
+const dealerCardsElement =
+    document.getElementById("dealer-cards");
 
-const messageElement = document.getElementById("game-message");
+const playerScoreElement =
+    document.getElementById("player-score");
 
-const startButton = document.getElementById("start-button");
-const hitButton = document.getElementById("hit-button");
-const standButton = document.getElementById("stand-button");
+const dealerScoreElement =
+    document.getElementById("dealer-score");
 
-const plusBetButton = document.getElementById("plus-bet");
-const minusBetButton = document.getElementById("minus-bet");
+const messageElement =
+    document.getElementById("message");
 
-const historyList = document.getElementById("history-list");
+const newGameButton =
+    document.getElementById("new-game");
 
-### Cartes ###
+const hitButton =
+    document.getElementById("hit");
+
+const standButton =
+    document.getElementById("stand");
+
+const plusButton =
+    document.getElementById("plus");
+
+const minusButton =
+    document.getElementById("minus");
+
+const historyElement =
+    document.getElementById("history");
+
+
+// Cartes
 
 const suits = [
-    {
-        symbol: "♠",
-        name: "spades",
-        color: "black"
-    },
-    {
-        symbol: "♥",
-        name: "hearts",
-        color: "red"
-    },
-    {
-        symbol: "♦",
-        name: "diamonds",
-        color: "red"
-    },
-    {
-        symbol: "♣",
-        name: "clubs",
-        color: "black"
-    }
+    { symbol: "♠", color: "black" },
+    { symbol: "♥", color: "red" },
+    { symbol: "♦", color: "red" },
+    { symbol: "♣", color: "black" }
 ];
 
 const values = [
-    {
-        name: "2",
-        value: 2
-    },
-    {
-        name: "3",
-        value: 3
-    },
-    {
-        name: "4",
-        value: 4
-    },
-    {
-        name: "5",
-        value: 5
-    },
-    {
-        name: "6",
-        value: 6
-    },
-    {
-        name: "7",
-        value: 7
-    },
-    {
-        name: "8",
-        value: 8
-    },
-    {
-        name: "9",
-        value: 9
-    },
-    {
-        name: "10",
-        value: 10
-    },
-    {
-        name: "J",
-        value: 10
-    },
-    {
-        name: "Q",
-        value: 10
-    },
-    {
-        name: "K",
-        value: 10
-    },
-    {
-        name: "A",
-        value: 11
-    }
+    { name: "2", value: 2 },
+    { name: "3", value: 3 },
+    { name: "4", value: 4 },
+    { name: "5", value: 5 },
+    { name: "6", value: 6 },
+    { name: "7", value: 7 },
+    { name: "8", value: 8 },
+    { name: "9", value: 9 },
+    { name: "10", value: 10 },
+    { name: "J", value: 10 },
+    { name: "Q", value: 10 },
+    { name: "K", value: 10 },
+    { name: "A", value: 11 }
 ];
 
-### Créer le paquet ###
+
+// Création du paquet
 
 function createDeck() {
 
@@ -126,36 +94,37 @@ function createDeck() {
         for (const value of values) {
 
             deck.push({
-                suit: suit.symbol,
-                color: suit.color,
                 name: value.name,
-                value: value.value
+                value: value.value,
+                suit: suit.symbol,
+                color: suit.color
             });
-
         }
-
     }
 
-    shuffleDeck();
+    shuffle();
 }
 
-### Mélanger le paquet ###
 
-function shuffleDeck() {
+// Mélange
+
+function shuffle() {
 
     for (let i = deck.length - 1; i > 0; i--) {
 
-        const randomIndex = Math.floor(Math.random() * (i + 1));
+        const random =
+            Math.floor(Math.random() * (i + 1));
 
         const temporary = deck[i];
 
-        deck[i] = deck[randomIndex];
+        deck[i] = deck[random];
 
-        deck[randomIndex] = temporary;
+        deck[random] = temporary;
     }
 }
 
-### Piocher une carte ###
+
+// Tirer une carte
 
 function drawCard() {
 
@@ -166,12 +135,12 @@ function drawCard() {
     return deck.pop();
 }
 
-### Calculer le score ###
 
-function calculateScore(cards) {
+// Calcul du score
+
+function getScore(cards) {
 
     let score = 0;
-
     let aces = 0;
 
     for (const card of cards) {
@@ -193,39 +162,40 @@ function calculateScore(cards) {
     return score;
 }
 
-### Afficher une carte ###
 
-function createCardElement(card, hidden = false) {
+// Afficher une carte
 
-    const cardElement = document.createElement("div");
+function createCard(card, hidden = false) {
 
-    cardElement.classList.add("card");
+    const element =
+        document.createElement("div");
 
-    if (card.color === "red") {
-        cardElement.classList.add("red");
-    }
+    element.classList.add("card");
 
     if (hidden) {
 
-        cardElement.classList.add("hidden");
+        element.classList.add("hidden-card");
 
-        cardElement.innerHTML = "";
-
-        return cardElement;
+        return element;
     }
 
-    cardElement.innerHTML = `
-        <div class="card-value">${card.name}</div>
-        <div class="card-suit">${card.suit}</div>
-        <div class="card-bottom">${card.name}</div>
+    if (card.color === "red") {
+        element.classList.add("red");
+    }
+
+    element.innerHTML = `
+        <div class="number">${card.name}</div>
+        <div class="suit">${card.suit}</div>
+        <div class="bottom">${card.name}</div>
     `;
 
-    return cardElement;
+    return element;
 }
 
-### Afficher les cartes ###
 
-function renderCards() {
+// Affichage
+
+function render() {
 
     playerCardsElement.innerHTML = "";
     dealerCardsElement.innerHTML = "";
@@ -233,20 +203,19 @@ function renderCards() {
     for (const card of playerCards) {
 
         playerCardsElement.appendChild(
-            createCardElement(card)
+            createCard(card)
         );
-
     }
 
     for (let i = 0; i < dealerCards.length; i++) {
 
         const hidden =
-            gameStarted &&
-            !gameOver &&
+            playing &&
+            !finished &&
             i === 1;
 
         dealerCardsElement.appendChild(
-            createCardElement(
+            createCard(
                 dealerCards[i],
                 hidden
             )
@@ -254,21 +223,21 @@ function renderCards() {
     }
 
     playerScoreElement.textContent =
-        calculateScore(playerCards);
+        getScore(playerCards);
 
-    if (gameOver) {
+    if (finished) {
 
         dealerScoreElement.textContent =
-            calculateScore(dealerCards);
+            getScore(dealerCards);
 
     } else {
 
-        dealerScoreElement.textContent =
-            "?";
+        dealerScoreElement.textContent = "?";
     }
 }
 
-### Mettre à jour le solde ###
+
+// Solde
 
 function updateBalance() {
 
@@ -281,7 +250,8 @@ function updateBalance() {
     );
 }
 
-### Mettre à jour la mise ###
+
+// Mise
 
 function updateBet() {
 
@@ -289,11 +259,12 @@ function updateBet() {
         bet.toLocaleString("fr-FR");
 }
 
-### Nouvelle partie ###
 
-function startGame() {
+// Nouvelle partie
 
-    if (gameStarted && !gameOver) {
+function newGame() {
+
+    if (playing) {
         return;
     }
 
@@ -314,52 +285,50 @@ function startGame() {
     playerCards = [];
     dealerCards = [];
 
-    gameStarted = true;
-    gameOver = false;
-
     playerCards.push(drawCard());
     dealerCards.push(drawCard());
 
     playerCards.push(drawCard());
     dealerCards.push(drawCard());
 
-    messageElement.textContent =
-        "À vous de jouer.";
+    playing = true;
+    finished = false;
 
     hitButton.disabled = false;
     standButton.disabled = false;
 
-    renderCards();
+    messageElement.textContent =
+        "À vous de jouer !";
 
-    ### Vérification du Blackjack ###
+    render();
 
-    const playerScore =
-        calculateScore(playerCards);
+    // Blackjack naturel
 
-    if (playerScore === 21) {
+    if (getScore(playerCards) === 21) {
 
-        finishGame("blackjack");
+        finish("blackjack");
     }
 }
 
-### Tirer ###
+
+// Tirer
 
 function hit() {
 
-    if (!gameStarted || gameOver) {
+    if (!playing) {
         return;
     }
 
     playerCards.push(drawCard());
 
-    renderCards();
+    render();
 
     const score =
-        calculateScore(playerCards);
+        getScore(playerCards);
 
     if (score > 21) {
 
-        finishGame("bust");
+        finish("loss");
 
     } else if (score === 21) {
 
@@ -367,194 +336,142 @@ function hit() {
     }
 }
 
-### Rester ###
+
+// Rester
 
 function stand() {
 
-    if (!gameStarted || gameOver) {
+    if (!playing) {
         return;
     }
 
-    messageElement.textContent =
-        "Le croupier joue...";
-
-    while (calculateScore(dealerCards) < 17) {
+    while (getScore(dealerCards) < 17) {
 
         dealerCards.push(drawCard());
     }
 
-    renderCards();
-
-    determineWinner();
-}
-
-### Déterminer le gagnant ###
-
-function determineWinner() {
+    render();
 
     const playerScore =
-        calculateScore(playerCards);
+        getScore(playerCards);
 
     const dealerScore =
-        calculateScore(dealerCards);
+        getScore(dealerCards);
 
     if (dealerScore > 21) {
 
-        finishGame("dealer-bust");
+        finish("win");
 
     } else if (playerScore > dealerScore) {
 
-        finishGame("win");
+        finish("win");
 
     } else if (playerScore < dealerScore) {
 
-        finishGame("loss");
+        finish("loss");
 
     } else {
 
-        finishGame("draw");
+        finish("draw");
     }
 }
 
-### Fin de partie ###
 
-function finishGame(result) {
+// Fin de partie
 
-    gameOver = true;
-    gameStarted = false;
+function finish(result) {
+
+    playing = false;
+    finished = true;
 
     hitButton.disabled = true;
     standButton.disabled = true;
 
     let message = "";
-    let reward = 0;
+    let amount = 0;
 
-    switch (result) {
+    if (result === "blackjack") {
 
-        case "blackjack":
+        amount = Math.floor(bet * 2.5);
 
-            reward = bet * 2.5;
+        balance += amount;
 
-            balance += Math.floor(reward);
+        message =
+            "🎉 BLACKJACK ! +" +
+            amount +
+            " jetons";
 
-            message =
-                `BLACKJACK ! Vous gagnez ${Math.floor(reward)} jetons.`;
+        addHistory(
+            "Blackjack",
+            "+" + amount,
+            "win"
+        );
 
-            addHistory(
-                "Blackjack",
-                `+${Math.floor(reward)} 🪙`,
-                "win"
-            );
+    } else if (result === "win") {
 
-            break;
+        amount = bet * 2;
 
-        case "win":
+        balance += amount;
 
-            reward = bet * 2;
+        message =
+            "🎉 VOUS GAGNEZ ! +" +
+            amount +
+            " jetons";
 
-            balance += reward;
+        addHistory(
+            "Victoire",
+            "+" + amount,
+            "win"
+        );
 
-            message =
-                `Vous gagnez ! +${reward} jetons.`;
+    } else if (result === "loss") {
 
-            addHistory(
-                "Victoire",
-                `+${reward} 🪙`,
-                "win"
-            );
+        message =
+            "💀 Vous perdez la mise.";
 
-            break;
+        addHistory(
+            "Défaite",
+            "-" + bet,
+            "loss"
+        );
 
-        case "dealer-bust":
+    } else {
 
-            reward = bet * 2;
+        balance += bet;
 
-            balance += reward;
+        message =
+            "🤝 Égalité ! Votre mise est rendue.";
 
-            message =
-                `Le croupier dépasse 21 ! +${reward} jetons.`;
-
-            addHistory(
-                "Croupier dépassé",
-                `+${reward} 🪙`,
-                "win"
-            );
-
-            break;
-
-        case "loss":
-
-            message =
-                "Le croupier gagne.";
-
-            addHistory(
-                "Défaite",
-                `-${bet} 🪙`,
-                "loss"
-            );
-
-            break;
-
-        case "bust":
-
-            message =
-                "Vous avez dépassé 21.";
-
-            addHistory(
-                "Bust",
-                `-${bet} 🪙`,
-                "loss"
-            );
-
-            break;
-
-        case "draw":
-
-            balance += bet;
-
-            message =
-                "Égalité ! Votre mise est rendue.";
-
-            addHistory(
-                "Égalité",
-                `+${bet} 🪙`,
-                ""
-            );
-
-            break;
+        addHistory(
+            "Égalité",
+            "0",
+            ""
+        );
     }
 
     messageElement.textContent = message;
 
     updateBalance();
 
-    renderCards();
-
-    if (balance <= 0) {
-
-        messageElement.textContent +=
-            " Vous n'avez plus de jetons.";
-    }
+    render();
 }
 
-### Historique ###
+
+// Historique
 
 function addHistory(name, amount, type) {
 
     if (
-        historyList.children.length === 1 &&
-        historyList.children[0].textContent === "Aucune partie jouée"
+        historyElement.textContent.trim()
+        === "Aucune partie pour le moment."
     ) {
-
-        historyList.innerHTML = "";
+        historyElement.innerHTML = "";
     }
 
     const item =
         document.createElement("div");
 
-    item.classList.add(
-        "history-item"
-    );
+    item.classList.add("history-item");
 
     if (type) {
         item.classList.add(type);
@@ -562,72 +479,67 @@ function addHistory(name, amount, type) {
 
     item.innerHTML = `
         <span>${name}</span>
-        <strong>${amount}</strong>
+        <strong>${amount} 🪙</strong>
     `;
 
-    historyList.prepend(item);
-
-    if (historyList.children.length > 5) {
-
-        historyList.removeChild(
-            historyList.lastChild
-        );
-    }
+    historyElement.prepend(item);
 }
 
-### Bouton + mise ###
 
-plusBetButton.addEventListener(
-    "click",
-    () => {
+// Augmenter la mise
 
-        if (bet < 500) {
+plusButton.addEventListener("click", function () {
 
-            bet += 25;
-
-            updateBet();
-        }
+    if (playing) {
+        return;
     }
-);
 
-### Bouton - mise ###
+    if (bet < 500) {
 
-minusBetButton.addEventListener(
-    "click",
-    () => {
+        bet += 25;
 
-        if (bet > 25) {
-
-            bet -= 25;
-
-            updateBet();
-        }
+        updateBet();
     }
-);
+});
 
-### Nouvelle partie ###
 
-startButton.addEventListener(
+// Diminuer la mise
+
+minusButton.addEventListener("click", function () {
+
+    if (playing) {
+        return;
+    }
+
+    if (bet > 25) {
+
+        bet -= 25;
+
+        updateBet();
+    }
+});
+
+
+// Boutons
+
+newGameButton.addEventListener(
     "click",
-    startGame
+    newGame
 );
-
-### Tirer ###
 
 hitButton.addEventListener(
     "click",
     hit
 );
 
-### Rester ###
-
 standButton.addEventListener(
     "click",
     stand
 );
 
-### Initialisation ###
+
+// Initialisation
 
 updateBalance();
 updateBet();
-renderCards();
+render();
