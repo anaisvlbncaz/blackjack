@@ -460,3 +460,136 @@ footer {
         font-size: 16px;
     }
 }
+/* Mains de blackjack */
+
+#player-hands {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.player-hand {
+    padding: 20px;
+    border-radius: 18px;
+    transition: 0.3s;
+}
+
+.player-hand.active-hand {
+    background: rgba(243, 201, 105, 0.08);
+    box-shadow: 0 0 25px rgba(243, 201, 105, 0.12);
+}
+
+.hand-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    color: var(--gold-light);
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.hand-title span {
+    font-size: 12px;
+    color: #ddd;
+    letter-spacing: 0;
+}
+
+.player-hand .cards {
+    min-height: 110px;
+}
+
+.buttons button {
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.buttons button:not(:disabled):hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.buttons button:not(:disabled):active {
+    transform: scale(0.95);
+}
+
+
+/* Animation des cartes */
+
+.card {
+    animation:
+        dealCard 0.45s ease forwards;
+}
+
+@keyframes dealCard {
+
+    0% {
+        opacity: 0;
+        transform:
+            translateY(-35px)
+            translateX(20px)
+            rotate(-12deg)
+            scale(0.7);
+    }
+
+    70% {
+        opacity: 1;
+        transform:
+            translateY(5px)
+            rotate(3deg)
+            scale(1.03);
+    }
+
+    100% {
+        opacity: 1;
+        transform:
+            translateY(0)
+            rotate(0)
+            scale(1);
+    }
+}
+
+
+/* Boutons supplémentaires */
+
+#double {
+    border-color: #5cffad;
+}
+
+#split {
+    border-color: #75bfff;
+}
+
+#insurance {
+    border-color: #d89cff;
+}
+
+#surrender {
+    border-color: #ff6375;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    .hand-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .buttons {
+        width: 100%;
+    }
+
+    .buttons button {
+        flex: 1 1 40%;
+    }
+
+    .player-hand {
+        padding: 10px;
+    }
+}
