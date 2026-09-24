@@ -15,6 +15,7 @@ if (!balance) {
 let bet = 50;
 
 let deck = [];
+
 let dealerCards = [];
 let hands = [];
 
@@ -29,9 +30,15 @@ let insuranceTaken = false;
 
 let dealerHoleCardDealt = false;
 
+
+// ==============================
+// SABOT
+// ==============================
+
 const NUMBER_OF_DECKS = 6;
 const TOTAL_CARDS = NUMBER_OF_DECKS * 52;
 
+// Le sabot est renouvelé après 75 % de cartes utilisées
 const PENETRATION = 0.75;
 
 
@@ -42,26 +49,47 @@ const PENETRATION = 0.75;
 const balanceElement = document.getElementById("balance");
 const betElement = document.getElementById("bet");
 
-const playerHandsElement = document.getElementById("player-hands");
-const dealerCardsElement = document.getElementById("dealer-cards");
-const dealerScoreElement = document.getElementById("dealer-score");
+const playerHandsElement =
+    document.getElementById("player-hands");
 
-const messageElement = document.getElementById("message");
+const dealerCardsElement =
+    document.getElementById("dealer-cards");
 
-const newGameButton = document.getElementById("new-game");
+const dealerScoreElement =
+    document.getElementById("dealer-score");
 
-const hitButton = document.getElementById("hit");
-const standButton = document.getElementById("stand");
-const doubleButton = document.getElementById("double");
-const splitButton = document.getElementById("split");
+const messageElement =
+    document.getElementById("message");
 
-const insuranceButton = document.getElementById("insurance");
-const surrenderButton = document.getElementById("surrender");
+const newGameButton =
+    document.getElementById("new-game");
 
-const plusButton = document.getElementById("plus");
-const minusButton = document.getElementById("minus");
+const hitButton =
+    document.getElementById("hit");
 
-const historyElement = document.getElementById("history");
+const standButton =
+    document.getElementById("stand");
+
+const doubleButton =
+    document.getElementById("double");
+
+const splitButton =
+    document.getElementById("split");
+
+const insuranceButton =
+    document.getElementById("insurance");
+
+const surrenderButton =
+    document.getElementById("surrender");
+
+const plusButton =
+    document.getElementById("plus");
+
+const minusButton =
+    document.getElementById("minus");
+
+const historyElement =
+    document.getElementById("history");
 
 
 // ==============================
@@ -183,9 +211,16 @@ function shuffle() {
 
     for (let i = deck.length - 1; i > 0; i--) {
 
-        const j = Math.floor(Math.random() * (i + 1));
+        const j =
+            Math.floor(Math.random() * (i + 1));
 
-        [deck[i], deck[j]] = [deck[j], deck[i]];
+        [
+            deck[i],
+            deck[j]
+        ] = [
+            deck[j],
+            deck[i]
+        ];
 
     }
 
@@ -193,7 +228,7 @@ function shuffle() {
 
 
 // ==============================
-// TIRER UNE CARTE
+// TIRAGE
 // ==============================
 
 function drawCard() {
@@ -210,20 +245,24 @@ function drawCard() {
 
 
 // ==============================
-// VERIFICATION PENETRATION
+// VERIFICATION DU SABOT
 // ==============================
 
 function checkShoe() {
 
-    const cardsUsed = TOTAL_CARDS - deck.length;
+    const cardsUsed =
+        TOTAL_CARDS - deck.length;
 
-    const penetration = cardsUsed / TOTAL_CARDS;
+    const penetration =
+        cardsUsed / TOTAL_CARDS;
 
     if (penetration >= PENETRATION) {
 
         createDeck();
 
-        addHistory("Nouveau sabot de 6 jeux");
+        addHistory(
+            "Nouveau sabot de 6 jeux"
+        );
 
     }
 
@@ -237,6 +276,7 @@ function checkShoe() {
 function getScore(cards) {
 
     let score = 0;
+
     let aces = 0;
 
     for (const card of cards) {
@@ -244,7 +284,9 @@ function getScore(cards) {
         score += card.value;
 
         if (card.name === "A") {
+
             aces++;
+
         }
 
     }
@@ -252,6 +294,7 @@ function getScore(cards) {
     while (score > 21 && aces > 0) {
 
         score -= 10;
+
         aces--;
 
     }
@@ -267,7 +310,10 @@ function getScore(cards) {
 
 function isBlackjack(cards) {
 
-    return cards.length === 2 && getScore(cards) === 21;
+    return (
+        cards.length === 2 &&
+        getScore(cards) === 21
+    );
 
 }
 
@@ -278,11 +324,18 @@ function isBlackjack(cards) {
 
 function canSplit(hand) {
 
+    if (!hand) {
+        return false;
+    }
+
     if (hand.cards.length !== 2) {
         return false;
     }
 
-    return hand.cards[0].value === hand.cards[1].value;
+    return (
+        hand.cards[0].value ===
+        hand.cards[1].value
+    );
 
 }
 
@@ -291,32 +344,22 @@ function canSplit(hand) {
 // CREATION CARTE HTML
 // ==============================
 
-function createCard(card, hidden = false) {
+function createCard(card) {
 
-    const cardElement = document.createElement("div");
+    const cardElement =
+        document.createElement("div");
 
     cardElement.className = "card";
 
-    if (hidden) {
+    if (card.color === "red") {
 
-        cardElement.classList.add("hidden-card");
-
-        cardElement.innerHTML = `
-            <div class="card-back">
-                <span>♠</span>
-            </div>
-        `;
-
-        return cardElement;
+        cardElement.classList.add("red");
 
     }
 
-    cardElement.classList.add(card.color);
-
     cardElement.innerHTML = `
         <div class="card-value top">
-            ${card.name}
-            ${card.suit}
+            ${card.name} ${card.suit}
         </div>
 
         <div class="card-suit">
@@ -324,8 +367,7 @@ function createCard(card, hidden = false) {
         </div>
 
         <div class="card-value bottom">
-            ${card.name}
-            ${card.suit}
+            ${card.name} ${card.suit}
         </div>
     `;
 
@@ -342,13 +384,13 @@ function renderDealer() {
 
     dealerCardsElement.innerHTML = "";
 
-    dealerCards.forEach(card => {
+    for (const card of dealerCards) {
 
         dealerCardsElement.appendChild(
             createCard(card)
         );
 
-    });
+    }
 
     if (dealerCards.length === 0) {
 
@@ -358,17 +400,8 @@ function renderDealer() {
 
     }
 
-    if (!dealerHoleCardDealt && !finished) {
-
-        dealerScoreElement.textContent = getScore([
-            dealerCards[0]
-        ]);
-
-        return;
-
-    }
-
-    dealerScoreElement.textContent = getScore(dealerCards);
+    dealerScoreElement.textContent =
+        getScore(dealerCards);
 
 }
 
@@ -383,25 +416,39 @@ function renderPlayers() {
 
     hands.forEach((hand, index) => {
 
-        const handElement = document.createElement("div");
+        const handElement =
+            document.createElement("div");
 
-        handElement.className = "player-hand";
+        handElement.className =
+            "player-hand";
 
-        if (index === currentHand && playing) {
+        if (
+            index === currentHand &&
+            playing
+        ) {
 
-            handElement.classList.add("active-hand");
+            handElement.classList.add(
+                "active-hand"
+            );
 
         }
 
         if (hand.finished) {
 
-            handElement.classList.add("finished-hand");
+            handElement.classList.add(
+                "finished-hand"
+            );
 
         }
 
-        const title = document.createElement("div");
 
-        title.className = "hand-title";
+        // Titre
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "hand-title";
 
         title.textContent =
             hands.length > 1
@@ -410,43 +457,63 @@ function renderPlayers() {
 
         handElement.appendChild(title);
 
-        const cardsElement = document.createElement("div");
 
-        cardsElement.className = "hand-cards";
+        // Cartes
 
-        hand.cards.forEach(card => {
+        const cardsElement =
+            document.createElement("div");
+
+        cardsElement.className =
+            "hand-cards";
+
+        for (const card of hand.cards) {
 
             cardsElement.appendChild(
                 createCard(card)
             );
 
-        });
+        }
 
-        handElement.appendChild(cardsElement);
+        handElement.appendChild(
+            cardsElement
+        );
 
-        const scoreElement = document.createElement("div");
 
-        scoreElement.className = "hand-score";
+        // Score
+
+        const scoreElement =
+            document.createElement("div");
+
+        scoreElement.className =
+            "hand-score";
 
         scoreElement.textContent =
             `Score : ${getScore(hand.cards)}`;
 
-        handElement.appendChild(scoreElement);
+        handElement.appendChild(
+            scoreElement
+        );
 
-        if (hand.bet > 0) {
 
-            const betElement = document.createElement("div");
+        // Mise
 
-            betElement.className = "hand-bet";
+        const handBetElement =
+            document.createElement("div");
 
-            betElement.textContent =
-                `Mise : ${hand.bet} €`;
+        handBetElement.className =
+            "hand-bet";
 
-            handElement.appendChild(betElement);
+        handBetElement.textContent =
+            `Mise : ${hand.bet} €`;
 
-        }
+        handElement.appendChild(
+            handBetElement
+        );
 
-        playerHandsElement.appendChild(handElement);
+
+        playerHandsElement.appendChild(
+            handElement
+        );
 
     });
 
@@ -460,10 +527,13 @@ function renderPlayers() {
 function render() {
 
     renderDealer();
+
     renderPlayers();
 
     updateBalance();
+
     updateBet();
+
     updateButtons();
 
 }
@@ -504,9 +574,15 @@ function updateBet() {
 
 function updateButtons() {
 
-    const hand = hands[currentHand];
+    const hand =
+        hands[currentHand];
 
-    if (!playing || !hand || hand.finished) {
+
+    if (
+        !playing ||
+        !hand ||
+        hand.finished
+    ) {
 
         hitButton.disabled = true;
         standButton.disabled = true;
@@ -518,16 +594,27 @@ function updateButtons() {
 
     }
 
+
     hitButton.disabled = false;
+
     standButton.disabled = false;
+
+
+    // Double
 
     doubleButton.disabled =
         hand.cards.length !== 2 ||
         balance < hand.bet;
 
+
+    // Split
+
     splitButton.disabled =
         !canSplit(hand) ||
         balance < hand.bet;
+
+
+    // Surrender
 
     surrenderButton.disabled =
         hand.cards.length !== 2;
@@ -545,6 +632,7 @@ async function newGame() {
         return;
     }
 
+
     if (bet <= 0) {
 
         messageElement.textContent =
@@ -553,6 +641,7 @@ async function newGame() {
         return;
 
     }
+
 
     if (balance < bet) {
 
@@ -563,7 +652,13 @@ async function newGame() {
 
     }
 
+
+    // Vérification du sabot
+
     checkShoe();
+
+
+    // Reset
 
     dealerCards = [];
 
@@ -571,45 +666,71 @@ async function newGame() {
 
     currentHand = 0;
 
-    finished = false;
     playing = true;
 
+    finished = false;
+
     insuranceBet = 0;
+
     insuranceAvailable = false;
+
     insuranceTaken = false;
 
     dealerHoleCardDealt = false;
 
+
+    // Retrait de la mise
+
     balance -= bet;
 
-    const hand = {
-        cards: [],
-        bet: bet,
-        finished: false,
-        doubled: false,
-        splitAces: false,
-        surrendered: false
-    };
 
-    hands.push(hand);
+    // Création main joueur
+
+    hands.push({
+
+        cards: [],
+
+        bet: bet,
+
+        finished: false,
+
+        doubled: false,
+
+        splitAces: false,
+
+        surrendered: false
+
+    });
+
 
     render();
+
 
     messageElement.textContent =
         "Distribution...";
 
-    // Carte joueur 1
+
+    // ==============================
+    // ORDRE DE DISTRIBUTION
+    // ==============================
+
+    // Joueur 1
+
     await dealToPlayer();
 
-    // Carte croupier visible
+    // Croupier 1
+
     await dealToDealer();
 
-    // Carte joueur 2
+    // Joueur 2
+
     await dealToPlayer();
+
 
     render();
 
     await sleep(400);
+
 
     await afterInitialDeal();
 
@@ -617,27 +738,30 @@ async function newGame() {
 
 
 // ==============================
-// FIN DE DISTRIBUTION INITIALE
+// FIN DISTRIBUTION INITIALE
 // ==============================
 
 async function afterInitialDeal() {
 
     const hand = hands[0];
 
-    // Blackjack naturel du joueur
+
+    // Blackjack naturel joueur
+
     if (isBlackjack(hand.cards)) {
 
         messageElement.textContent =
             "Blackjack !";
 
-        // Le croupier reçoit maintenant sa seconde carte
         await dealerTurn();
 
         return;
 
     }
 
-    // Assurance si la carte visible du croupier est un As
+
+    // Assurance
+
     if (
         dealerCards.length > 0 &&
         dealerCards[0].name === "A"
@@ -655,16 +779,19 @@ async function afterInitialDeal() {
 
     }
 
+
     render();
 
 }
 
 
 // ==============================
-// DISTRIBUTION JOUEUR
+// DISTRIBUER JOUEUR
 // ==============================
 
-async function dealToPlayer(handIndex = currentHand) {
+async function dealToPlayer(
+    handIndex = currentHand
+) {
 
     const card = drawCard();
 
@@ -672,13 +799,13 @@ async function dealToPlayer(handIndex = currentHand) {
 
     render();
 
-    await sleep(350);
+    await sleep(400);
 
 }
 
 
 // ==============================
-// DISTRIBUTION CROUPIER
+// DISTRIBUER CROUPIER
 // ==============================
 
 async function dealToDealer() {
@@ -689,7 +816,7 @@ async function dealToDealer() {
 
     render();
 
-    await sleep(400);
+    await sleep(450);
 
 }
 
@@ -704,17 +831,27 @@ async function hit() {
         return;
     }
 
-    const hand = hands[currentHand];
+
+    const hand =
+        hands[currentHand];
+
 
     if (!hand || hand.finished) {
         return;
     }
 
+
     insuranceAvailable = false;
+
 
     await dealToPlayer();
 
-    const score = getScore(hand.cards);
+
+    const score =
+        getScore(hand.cards);
+
+
+    // Bust
 
     if (score > 21) {
 
@@ -723,13 +860,18 @@ async function hit() {
         messageElement.textContent =
             "Vous avez dépassé 21.";
 
-        await sleep(500);
+        render();
+
+        await sleep(600);
 
         await nextHand();
 
         return;
 
     }
+
+
+    // 21
 
     if (score === 21) {
 
@@ -738,13 +880,16 @@ async function hit() {
         messageElement.textContent =
             "21 !";
 
-        await sleep(500);
+        render();
+
+        await sleep(600);
 
         await nextHand();
 
         return;
 
     }
+
 
     messageElement.textContent =
         "À vous de jouer.";
@@ -764,22 +909,28 @@ async function stand() {
         return;
     }
 
-    const hand = hands[currentHand];
+
+    const hand =
+        hands[currentHand];
+
 
     if (!hand || hand.finished) {
         return;
     }
 
+
     hand.finished = true;
 
     insuranceAvailable = false;
 
+
     messageElement.textContent =
         "Main terminée.";
 
+
     render();
 
-    await sleep(400);
+    await sleep(500);
 
     await nextHand();
 
@@ -792,13 +943,15 @@ async function stand() {
 
 async function nextHand() {
 
-    for (let i = 0; i < hands.length; i++) {
+    for (
+        let i = 0;
+        i < hands.length;
+        i++
+    ) {
 
         if (!hands[i].finished) {
 
             currentHand = i;
-
-            insuranceAvailable = false;
 
             messageElement.textContent =
                 `Main ${i + 1}. À vous de jouer.`;
@@ -811,7 +964,9 @@ async function nextHand() {
 
     }
 
+
     // Toutes les mains sont terminées
+
     await dealerTurn();
 
 }
@@ -827,18 +982,24 @@ async function dealerTurn() {
 
     insuranceAvailable = false;
 
+
     messageElement.textContent =
         "Le croupier joue...";
 
+
     render();
 
-    await sleep(500);
+    await sleep(600);
+
 
     // ==============================
-    // LA 2E CARTE EST ENFIN TIRÉE
+    // DEUXIEME CARTE CROUPIER
     // ==============================
 
     if (!dealerHoleCardDealt) {
+
+        messageElement.textContent =
+            "Le croupier retourne sa carte...";
 
         await dealToDealer();
 
@@ -850,28 +1011,34 @@ async function dealerTurn() {
 
     }
 
+
     // ==============================
-    // VERIFICATION BLACKJACK CROUPIER
+    // BLACKJACK CROUPIER
     // ==============================
 
     const dealerBlackjack =
         isBlackjack(dealerCards);
 
-    // Paiement assurance
+
+    // Assurance
+
     if (insuranceTaken) {
 
         if (dealerBlackjack) {
 
-            balance += insuranceBet * 3;
+            const insuranceReturn =
+                insuranceBet * 3;
+
+            balance += insuranceReturn;
 
             addHistory(
-                `Assurance gagnante +${insuranceBet * 2} €`
+                `Assurance gagnante : mise ${insuranceBet} € → retour ${insuranceReturn} € → gain net +${insuranceBet * 2} €`
             );
 
         } else {
 
             addHistory(
-                `Assurance perdue -${insuranceBet} €`
+                `Assurance perdue : mise ${insuranceBet} € → retour 0 €`
             );
 
         }
@@ -881,6 +1048,7 @@ async function dealerTurn() {
         insuranceTaken = false;
 
     }
+
 
     // ==============================
     // BLACKJACK CROUPIER
@@ -893,26 +1061,32 @@ async function dealerTurn() {
 
         for (const hand of hands) {
 
-            if (isBlackjack(hand.cards)) {
+            const playerBlackjack =
+                isBlackjack(hand.cards);
 
-                // Push
+
+            if (playerBlackjack) {
+
                 balance += hand.bet;
 
                 addHistory(
-                    "Blackjack contre blackjack : égalité"
+                    `Blackjack contre blackjack : mise ${hand.bet} € → retour ${hand.bet} € → gain net 0 €`
                 );
 
             } else {
 
                 addHistory(
-                    `Main perdue : -${hand.bet} €`
+                    `Défaite : mise ${hand.bet} € → retour 0 €`
                 );
 
             }
 
         }
 
+
         finished = true;
+
+        playing = false;
 
         render();
 
@@ -920,119 +1094,30 @@ async function dealerTurn() {
 
     }
 
+
     // ==============================
-    // LE CROUPIER TIRE JUSQU'À 17
+    // TOUR DU CROUPIER
     // ==============================
 
-    while (getScore(dealerCards) < 17) {
+    while (
+        getScore(dealerCards) < 17
+    ) {
 
         await dealToDealer();
 
     }
 
+
     render();
 
     await sleep(700);
+
 
     // ==============================
     // RESULTATS
     // ==============================
 
     finishAll();
-
-}
-
-
-// ==============================
-// RESULTATS
-// ==============================
-
-function finishAll() {
-
-    const dealerScore = getScore(dealerCards);
-
-    let totalWin = 0;
-
-    for (const hand of hands) {
-
-        const playerScore = getScore(hand.cards);
-
-        if (hand.surrendered) {
-
-            balance += hand.bet / 2;
-
-            totalWin += hand.bet / 2;
-
-            addHistory(
-                `Abandon : récupération de ${hand.bet / 2} €`
-            );
-
-            continue;
-
-        }
-
-        if (playerScore > 21) {
-
-            addHistory(
-                `Perte : -${hand.bet} €`
-            );
-
-            continue;
-
-        }
-
-        if (dealerScore > 21) {
-
-            balance += hand.bet * 2;
-
-            totalWin += hand.bet * 2;
-
-            addHistory(
-                `Victoire : +${hand.bet} €`
-            );
-
-            continue;
-
-        }
-
-        if (playerScore > dealerScore) {
-
-            balance += hand.bet * 2;
-
-            totalWin += hand.bet * 2;
-
-            addHistory(
-                `Victoire : +${hand.bet} €`
-            );
-
-        } else if (playerScore < dealerScore) {
-
-            addHistory(
-                `Défaite : -${hand.bet} €`
-            );
-
-        } else {
-
-            balance += hand.bet;
-
-            totalWin += hand.bet;
-
-            addHistory(
-                `Égalité : mise récupérée`
-            );
-
-        }
-
-    }
-
-    finished = true;
-
-    playing = false;
-
-    messageElement.textContent =
-        "Fin de la partie.";
-
-    render();
 
 }
 
@@ -1047,15 +1132,20 @@ async function doubleDown() {
         return;
     }
 
-    const hand = hands[currentHand];
+
+    const hand =
+        hands[currentHand];
+
 
     if (!hand || hand.finished) {
         return;
     }
 
+
     if (hand.cards.length !== 2) {
         return;
     }
+
 
     if (balance < hand.bet) {
 
@@ -1066,6 +1156,9 @@ async function doubleDown() {
 
     }
 
+
+    // Deuxième mise
+
     balance -= hand.bet;
 
     hand.bet *= 2;
@@ -1074,9 +1167,15 @@ async function doubleDown() {
 
     insuranceAvailable = false;
 
+
+    // Une seule carte
+
     await dealToPlayer();
 
-    const score = getScore(hand.cards);
+
+    const score =
+        getScore(hand.cards);
+
 
     if (score > 21) {
 
@@ -1094,9 +1193,10 @@ async function doubleDown() {
 
     }
 
+
     render();
 
-    await sleep(500);
+    await sleep(600);
 
     await nextHand();
 
@@ -1113,15 +1213,20 @@ async function splitHand() {
         return;
     }
 
-    const hand = hands[currentHand];
+
+    const hand =
+        hands[currentHand];
+
 
     if (!hand) {
         return;
     }
 
+
     if (!canSplit(hand)) {
         return;
     }
+
 
     if (balance < hand.bet) {
 
@@ -1132,28 +1237,54 @@ async function splitHand() {
 
     }
 
+
+    // Deuxième mise
+
     balance -= hand.bet;
 
-    const firstCard = hand.cards[0];
-    const secondCard = hand.cards[1];
+
+    const firstCard =
+        hand.cards[0];
+
+    const secondCard =
+        hand.cards[1];
+
 
     const hand1 = {
+
         cards: [firstCard],
+
         bet: hand.bet,
+
         finished: false,
+
         doubled: false,
-        splitAces: firstCard.name === "A",
+
+        splitAces:
+            firstCard.name === "A",
+
         surrendered: false
+
     };
 
+
     const hand2 = {
+
         cards: [secondCard],
+
         bet: hand.bet,
+
         finished: false,
+
         doubled: false,
-        splitAces: secondCard.name === "A",
+
+        splitAces:
+            secondCard.name === "A",
+
         surrendered: false
+
     };
+
 
     hands.splice(
         currentHand,
@@ -1162,49 +1293,65 @@ async function splitHand() {
         hand2
     );
 
+
     messageElement.textContent =
         "Split effectué.";
 
+
     render();
 
-    await sleep(400);
+    await sleep(500);
+
 
     // ==============================
-    // MAIN 1
+    // PREMIERE MAIN
     // ==============================
 
-    await dealToPlayer(currentHand);
+    currentHand = 0;
 
+    await dealToPlayer(0);
+
+
+    // Split d'As
     if (hand1.splitAces) {
 
         hand1.finished = true;
 
     }
 
+
     // ==============================
-    // MAIN 2
+    // DEUXIEME MAIN
     // ==============================
 
-    currentHand++;
+    currentHand = 1;
 
-    await dealToPlayer(currentHand);
+    await dealToPlayer(1);
 
+
+    // Split d'As
     if (hand2.splitAces) {
 
         hand2.finished = true;
 
     }
 
+
     // ==============================
-    // SI SPLIT D'AS
+    // SPLIT D'AS
     // ==============================
 
-    if (hand1.splitAces && hand2.splitAces) {
+    if (
+        hand1.splitAces &&
+        hand2.splitAces
+    ) {
 
         messageElement.textContent =
             "Split d'As terminé.";
 
-        await sleep(500);
+        render();
+
+        await sleep(600);
 
         await nextHand();
 
@@ -1212,21 +1359,26 @@ async function splitHand() {
 
     }
 
-    // Si la première main est un As splitté
-    if (hand1.splitAces) {
 
-        currentHand = 1;
+    // ==============================
+    // PREMIERE MAIN JOUABLE
+    // ==============================
 
-    } else {
+    if (!hand1.splitAces) {
 
         currentHand = 0;
 
+    } else {
+
+        currentHand = 1;
+
     }
 
-    insuranceAvailable = false;
 
     messageElement.textContent =
         `Main ${currentHand + 1}. À vous de jouer.`;
+
+    insuranceAvailable = false;
 
     render();
 
@@ -1243,18 +1395,24 @@ function takeInsurance() {
         return;
     }
 
+
     if (!insuranceAvailable) {
         return;
     }
+
 
     if (insuranceTaken) {
         return;
     }
 
-    const hand = hands[0];
+
+    const hand =
+        hands[0];
+
 
     const maxInsurance =
         hand.bet / 2;
+
 
     if (balance < maxInsurance) {
 
@@ -1265,6 +1423,7 @@ function takeInsurance() {
 
     }
 
+
     insuranceBet = maxInsurance;
 
     balance -= insuranceBet;
@@ -1273,8 +1432,10 @@ function takeInsurance() {
 
     insuranceAvailable = false;
 
+
     messageElement.textContent =
         `Assurance prise : ${insuranceBet} €`;
+
 
     render();
 
@@ -1291,15 +1452,20 @@ async function surrender() {
         return;
     }
 
-    const hand = hands[currentHand];
+
+    const hand =
+        hands[currentHand];
+
 
     if (!hand) {
         return;
     }
 
+
     if (hand.cards.length !== 2) {
         return;
     }
+
 
     hand.surrendered = true;
 
@@ -1307,12 +1473,14 @@ async function surrender() {
 
     insuranceAvailable = false;
 
+
     messageElement.textContent =
         "Abandon.";
 
+
     render();
 
-    await sleep(400);
+    await sleep(500);
 
     await nextHand();
 
@@ -1320,41 +1488,199 @@ async function surrender() {
 
 
 // ==============================
-// BOUTONS MISE
+// FIN DE PARTIE
 // ==============================
 
-plusButton.addEventListener("click", () => {
+function finishAll() {
 
-    if (playing) {
-        return;
+    const dealerScore =
+        getScore(dealerCards);
+
+
+    for (const hand of hands) {
+
+        const playerScore =
+            getScore(hand.cards);
+
+
+        // ==============================
+        // SURRENDER
+        // ==============================
+
+        if (hand.surrendered) {
+
+            const refund =
+                hand.bet / 2;
+
+            balance += refund;
+
+
+            addHistory(
+                `Abandon : mise ${hand.bet} € → retour ${refund} € → perte nette -${refund} €`
+            );
+
+            continue;
+
+        }
+
+
+        // ==============================
+        // JOUEUR BUST
+        // ==============================
+
+        if (playerScore > 21) {
+
+            addHistory(
+                `Défaite : mise ${hand.bet} € → retour 0 € → perte nette -${hand.bet} €`
+            );
+
+            continue;
+
+        }
+
+
+        // ==============================
+        // CROUPIER BUST
+        // ==============================
+
+        if (dealerScore > 21) {
+
+            const payout =
+                hand.bet * 2;
+
+            const profit =
+                hand.bet;
+
+            balance += payout;
+
+
+            addHistory(
+                `Victoire : mise ${hand.bet} € → retour ${payout} € → gain net +${profit} €`
+            );
+
+            continue;
+
+        }
+
+
+        // ==============================
+        // JOUEUR GAGNE
+        // ==============================
+
+        if (playerScore > dealerScore) {
+
+            const payout =
+                hand.bet * 2;
+
+            const profit =
+                hand.bet;
+
+            balance += payout;
+
+
+            addHistory(
+                `Victoire : mise ${hand.bet} € → retour ${payout} € → gain net +${profit} €`
+            );
+
+        }
+
+
+        // ==============================
+        // CROUPIER GAGNE
+        // ==============================
+
+        else if (playerScore < dealerScore) {
+
+            addHistory(
+                `Défaite : mise ${hand.bet} € → retour 0 € → perte nette -${hand.bet} €`
+            );
+
+        }
+
+
+        // ==============================
+        // EGALITE
+        // ==============================
+
+        else {
+
+            const payout =
+                hand.bet;
+
+            balance += payout;
+
+
+            addHistory(
+                `Égalité : mise ${hand.bet} € → retour ${payout} € → gain net 0 €`
+            );
+
+        }
+
     }
 
-    if (bet + 10 <= balance) {
 
-        bet += 10;
+    finished = true;
 
-        updateBet();
+    playing = false;
+
+
+    messageElement.textContent =
+        "Fin de la partie.";
+
+
+    render();
+
+}
+
+
+// ==============================
+// MISE +
+// ==============================
+
+plusButton.addEventListener(
+    "click",
+    () => {
+
+        if (playing) {
+            return;
+        }
+
+
+        if (bet + 10 <= balance) {
+
+            bet += 10;
+
+            updateBet();
+
+        }
 
     }
+);
 
-});
+
+// ==============================
+// MISE -
+// ==============================
+
+minusButton.addEventListener(
+    "click",
+    () => {
+
+        if (playing) {
+            return;
+        }
 
 
-minusButton.addEventListener("click", () => {
+        if (bet > 10) {
 
-    if (playing) {
-        return;
+            bet -= 10;
+
+            updateBet();
+
+        }
+
     }
-
-    if (bet > 10) {
-
-        bet -= 10;
-
-        updateBet();
-
-    }
-
-});
+);
 
 
 // ==============================
@@ -1407,11 +1733,16 @@ function addHistory(text) {
         return;
     }
 
-    const item = document.createElement("div");
 
-    item.className = "history-item";
+    const item =
+        document.createElement("div");
 
-    item.textContent = text;
+    item.className =
+        "history-item";
+
+    item.textContent =
+        text;
+
 
     historyElement.prepend(item);
 
@@ -1424,11 +1755,9 @@ function addHistory(text) {
 
 function sleep(ms) {
 
-    return new Promise(resolve => {
-
-        setTimeout(resolve, ms);
-
-    });
+    return new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
 
 }
 
@@ -1440,7 +1769,8 @@ function sleep(ms) {
 function getTotalBets() {
 
     return hands.reduce(
-        (total, hand) => total + hand.bet,
+        (total, hand) =>
+            total + hand.bet,
         0
     );
 
@@ -1451,12 +1781,14 @@ function getTotalBets() {
 // INITIALISATION
 // ==============================
 
-// Création du premier sabot
 createDeck();
 
 updateBalance();
+
 updateBet();
+
 render();
+
 
 messageElement.textContent =
     "Placez votre mise puis lancez une partie.";
