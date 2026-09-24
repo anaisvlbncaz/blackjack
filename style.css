@@ -152,17 +152,19 @@ h1 {
 .cards,
 .hand-cards,
 #dealer-cards {
-    min-height: 110px;
-
     display: flex;
-
     flex-direction: row;
+    flex-wrap: nowrap;
 
     align-items: center;
+    justify-content: flex-start;
 
     gap: 12px;
 
-    flex-wrap: wrap;
+    width: 100%;
+    min-height: 120px;
+
+    overflow-x: auto;
 }
 
 
@@ -172,9 +174,8 @@ h1 {
     width: 75px;
     height: 105px;
 
-    flex: 0 0 auto;
-
-    margin-right: 0;
+    min-width: 75px;
+    flex: 0 0 75px;
 
     padding: 8px;
 
@@ -183,18 +184,15 @@ h1 {
     justify-content: space-between;
 
     background: white;
-
     color: #111;
 
     border-radius: 9px;
-
     border: 2px solid #ddd;
 
     box-shadow:
         0 8px 15px rgba(0, 0, 0, 0.4);
 
-    animation:
-        dealCard 0.45s ease forwards;
+    animation: dealCard 0.45s ease forwards;
 }
 
 
